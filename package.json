@@ -2,7 +2,7 @@
   "name": "vs-code-custom-hover-extension",
   "displayName": "Custom Hover",
   "description": "Fully customizable code hover extension",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.78.0"
   },
