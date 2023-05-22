@@ -16,30 +16,26 @@ Use cases include:
 
 1. Install typings for vscode `npm install @types/vscode`.
 
-2. Put a file `provideHover.mjs` in your project root with the following code:
+2. Put a file `provideHover.cjs` in your project root with the following code:
 
 ```js
-// provideHover.mjs
+// provideHover.cjs
 
 // Note: we could also use typescript and actually transpile this file
 // here we use type annotations in a plain js module!
 /** @typedef{ import('vscode') } vscode */
-/** @typedef{ import('vscode').TextDocument } TextDocument */
-/** @typedef{ import('vscode').Position } Position */
-/** @typedef{ import('vscode').Range } Range */
-/** @typedef{ import('vscode').Hover } Hover */
-/** @typedef{ import('vscode').CancellationToken } CancellationToken */
 
 /**
  * we can only use ts annotations here unfortunately
  * if you want actual ts you need to compile this file yourself from ts
  * @param vscode {vscode}
- * @param document {TextDocument}
- * @param position {Position}
- * @param token {CancellationToken}
- * @return {Promise<Hover>}
+ * @param document {vscode.TextDocument}
+ * @param position {vscode.Position}
+ * @param out {vscode.OutputChannel}
+ * @param token {vscode.CancellationToken}
+ * @return {Promise<vscode.Hover>}
  */
-export function provideHover(vscode, document, position, token) {
+function provideHover(vscode, document, position, token) {
   // get word from the document at the hovered location
   const range = document.getWordRangeAtPosition(position);
   const word = document.getText(range);
@@ -59,6 +55,8 @@ It takes markdown an can be used to provide custom data.
   markdown.isTrusted = true;
   return new vscode.Hover(markdown);
 }
+
+module.exports = { provideHover };
 ```
 
 3. In case your method returns `undefined`, no hover will be shown.
@@ -66,7 +64,7 @@ It takes markdown an can be used to provide custom data.
 4. You can use the document url to filter for file types etc..
 
 ```js
-export function provideHover(vscode, document, position, token) {
+function provideHover(vscode, document, position, token) {
   // use this to bail out in case you don't want to provide a hover panel
   const uri = document.uri.toString();
   if (!uri.match(/\.txt$/)) {
@@ -76,11 +74,25 @@ export function provideHover(vscode, document, position, token) {
 }
 ```
 
+## API
+
+Currently only one function with the following signature is expected to be exported from your provideHoverFile:
+
+```ts
+async function provideHover(
+  vscode: vscode,
+  document: vscode.TextDocument,
+  position: vscode.Position,
+  out: vscode.OutputChannel,
+  token: vscode.CancellationToken
+): Promise<vscode.Hover>;
+```
+
 ## Extension Settings
 
 This extension contributes the following settings:
 
-- `customhover.provideHoverFile`: path to file which exports `provideHover`method, default `[workspace]/provideHover.mjs`
+- `customhover.provideHoverFile`: path to file which exports `provideHover` method. (default: `[workspace]/provideHover.cjs`)
 
 ## Release Notes
 

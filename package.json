@@ -1,8 +1,9 @@
 {
   "name": "vs-code-custom-hover-extension",
   "displayName": "Custom Hover",
-  "description": "Fully customizable code hover extension",
-  "version": "1.0.0",
+  "description": "Create customizable and context-aware hover panels for your project.",
+  "version": "1.0.1",
+  "icon": "images/icon.png",
   "publisher": "Jan-Kretschmer",
   "engines": {
     "vscode": "^1.78.0"
@@ -15,6 +16,8 @@
     "url": "https://github.com/sijakret/vs-code-custom-hover-extension"
   },
   "categories": [
+    "Testing",
+    "Debuggers",
     "Other"
   ],
   "activationEvents": [
@@ -24,8 +27,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "vs-code-custom-hover-extension.helloWorld",
-        "title": "Hello World"
+        "command": "vs-code-custom-hover-extension.runInTerminal",
+        "title": "Run commands in new terminal"
       }
     ],
     "capabilities": {
@@ -36,7 +39,7 @@
       "properties": {
         "customhover.provideHoverFile": {
           "type": "string",
-          "default": "provideHover.mjs",
+          "default": "provideHover.cjs",
           "description": "Path to file that exports provideHover as named export"
         }
       }

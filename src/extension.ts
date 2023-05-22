@@ -4,9 +4,14 @@ import { resolve } from "path";
 import * as vscode from "vscode";
 import { registerCommands } from "./commands";
 
+let out = vscode.window.createOutputChannel("Custom Hover");
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
+  //Write to output.
+  out.appendLine("activated");
+
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
@@ -19,6 +24,7 @@ export function activate(context: vscode.ExtensionContext) {
   disposables.push(
     vscode.languages.registerHoverProvider("*", {
       async provideHover(document, position, token) {
+        out.appendLine("providing hover");
         let provideHoverFilePath: string = "";
         try {
           let workspaceFolder: string = "";
@@ -27,26 +33,18 @@ export function activate(context: vscode.ExtensionContext) {
             workspaceFolder = folders[0].uri.fsPath as string;
           }
           provideHoverFilePath = resolve(workspaceFolder, provideHoverFileName);
+          out.appendLine("path: " + provideHoverFilePath);
         } catch (e) {
           throw new Error("no workspace loaded");
         }
         try {
-          const { provideHover } = await eval(
-            `import('${provideHoverFilePath}')`
-          );
-          const i = await provideHover(vscode, document, position, token);
+          const { provideHover } = await eval("require")(provideHoverFilePath);
+          const i = await provideHover(vscode, document, position, out, token);
           return i;
         } catch (e) {
+          out.appendLine("Error: " + e);
           return console.error(e);
         }
-
-        const range = document.getWordRangeAtPosition(position);
-        const word = document.getText(range);
-
-        return new vscode.Hover({
-          language: "Hello language",
-          value: "Hello Value",
-        });
       },
     })
   );
