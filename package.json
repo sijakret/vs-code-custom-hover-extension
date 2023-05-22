@@ -3,7 +3,7 @@
   "displayName": "Custom Hover",
   "description": "Fully customizable code hover extension",
   "version": "1.0.0",
-  "publisher": "JanKretschmer",
+  "publisher": "Jan-Kretschmer",
   "engines": {
     "vscode": "^1.78.0"
   },
